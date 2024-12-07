@@ -8,30 +8,30 @@ class TeacherApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Инициализация базы данных
+        
         self.db = QSqlDatabase.addDatabase("QSQLITE")
         self.db.setDatabaseName("teachers.db")
         if not self.db.open():
             print("Не удалось открыть базу данных")
             sys.exit(1)
 
-        # Инициализация UI
+        
         self.init_ui()
 
-        # Инициализация модели
+        
         self.model = QSqlTableModel(self)
         self.model.setTable("Teacher")
         self.model.select()
 
-        # Устанавливаем модель для отображения в QTableView
+        
         self.table_view.setModel(self.model)
 
     def init_ui(self):
-        # Основной виджет
+        
         central_widget = QWidget(self)
         self.setCentralWidget(central_widget)
 
-        # Layout для добавления/обновления
+        
         form_layout = QVBoxLayout()
 
         self.name_input = QLineEdit(self)
@@ -46,7 +46,7 @@ class TeacherApp(QMainWindow):
         self.age_input.setPlaceholderText("Возраст")
         form_layout.addWidget(self.age_input)
 
-        # Кнопки для добавления, обновления и удаления
+        
         button_layout = QHBoxLayout()
 
         self.add_button = QPushButton("Добавить преподавателя", self)
@@ -63,11 +63,11 @@ class TeacherApp(QMainWindow):
 
         form_layout.addLayout(button_layout)
 
-        # Настройка таблицы для отображения
+        
         self.table_view = QTableView(self)
         self.table_view.setSelectionBehavior(QTableView.SelectRows)
 
-        # Главный layout
+        
         layout = QVBoxLayout()
         layout.addLayout(form_layout)
         layout.addWidget(self.table_view)
@@ -83,15 +83,15 @@ class TeacherApp(QMainWindow):
         subject = self.subject_input.text()
         age = self.age_input.text()
 
-        if name and subject and age.isdigit():  # Проверка на пустые значения и возраст как число
+        if name and subject and age.isdigit():  
             query = QSqlQuery()
             query.prepare("INSERT INTO Teacher (name, subject, age) VALUES (?, ?, ?)")
             query.addBindValue(name)
             query.addBindValue(subject)
             query.addBindValue(int(age))
             if query.exec_():
-                self.model.select()  # Перезагружаем таблицу после добавления
-                self.clear_inputs()   # Очищаем поля ввода
+                self.model.select()  
+                self.clear_inputs()   
             else:
                 print("Ошибка при добавлении преподавателя:", query.lastError().text())
         else:
@@ -102,12 +102,12 @@ class TeacherApp(QMainWindow):
         selected_row = self.table_view.selectionModel().selectedRows()
         if selected_row:
             row = selected_row[0].row()
-            teacher_id = self.model.data(self.model.index(row, 0))  # Получаем ID преподавателя
+            teacher_id = self.model.data(self.model.index(row, 0))  
             name = self.name_input.text()
             subject = self.subject_input.text()
             age = self.age_input.text()
 
-            if name and subject and age.isdigit():  # Проверка на пустые значения и возраст как число
+            if name and subject and age.isdigit():  
                 query = QSqlQuery()
                 query.prepare("UPDATE Teacher SET name = ?, subject = ?, age = ? WHERE id = ?")
                 query.addBindValue(name)
@@ -115,8 +115,8 @@ class TeacherApp(QMainWindow):
                 query.addBindValue(int(age))
                 query.addBindValue(teacher_id)
                 if query.exec_():
-                    self.model.select()  # Перезагружаем таблицу
-                    self.clear_inputs()   # Очищаем поля ввода
+                    self.model.select()  
+                    self.clear_inputs()   
                 else:
                     print("Ошибка при обновлении данных преподавателя:", query.lastError().text())
             else:
@@ -127,14 +127,14 @@ class TeacherApp(QMainWindow):
         selected_row = self.table_view.selectionModel().selectedRows()
         if selected_row:
             row = selected_row[0].row()
-            teacher_id = self.model.data(self.model.index(row, 0))  # Получаем ID преподавателя
+            teacher_id = self.model.data(self.model.index(row, 0))  
 
             query = QSqlQuery()
             query.prepare("DELETE FROM Teacher WHERE id = ?")
             query.addBindValue(teacher_id)
             if query.exec_():
-                self.model.select()  # Перезагружаем таблицу после удаления
-                self.clear_inputs()   # Очищаем поля ввода
+                self.model.select()  
+                self.clear_inputs()   
             else:
                 print("Ошибка при удалении преподавателя:", query.lastError().text())
 
