@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-pyqt5 = "^5.15.11"
+pyqt5 = "5.15"
 sqlite-utils = "^3.38"
 
 
